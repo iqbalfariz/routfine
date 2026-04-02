@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Fariz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0f;
+  --surface: #141418;
+  --surface2: #1a1a22;
+  --surface3: #202028;
+  --border: #22222c;
+  --border2: #2c2c38;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --text: #f0ede8;
+  --text-muted: #6a6870;
+  --text-dim: #9a9898;
+  --ibadah: #7c9e8a;
+  --olahraga: #7a8cb5;
+  --kerja: #b57a7a;
+  --belajar: #a07ab5;
+  --malam: #7a8a8a;
+  --done: #5a9e6a;
+  --skip: #b5873a;
+  --undone: #444450;
+  --danger: #b55a5a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13,13,15,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 52px;
+}
+
+.nav-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-right: auto;
+  white-space: nowrap;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.nav-tab {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-muted);
+  border: none;
+  background: none;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.nav-tab.active {
+  background: var(--gold-dim);
+  color: var(--gold-light);
+}
+
+/* PAGES */
+.page { display: none; padding: 20px 16px; max-width: 640px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* QUOTE */
+.quote-banner {
+  background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.03));
+  border: 1px solid rgba(201,168,76,0.2);
+  border-left: 3px solid var(--gold);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.6s ease both;
+}
+.quote-text {
+  font-family: "Playfair Display", serif;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--gold-light);
+  line-height: 1.6;
+}
+.quote-author {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CURRENT TASK */
+.current-task-banner {
+  background: linear-gradient(135deg, rgba(122,140,181,0.1), rgba(122,140,181,0.04));
+  border: 1px solid rgba(122,140,181,0.25);
+  border-left: 3px solid var(--olahraga);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.current-task-banner.cat-ibadah { background: linear-gradient(135deg, rgba(124,158,138,0.1), rgba(124,158,138,0.04)); border-color: rgba(124,158,138,0.3); border-left-color: var(--ibadah); }
+.current-task-banner.cat-olahraga { background: linear-gradient(135deg, rgba(122,140,181,0.1), rgba(122,140,181,0.04)); border-color: rgba(122,140,181,0.3); border-left-color: var(--olahraga); }
+.current-task-banner.cat-kerja { background: linear-gradient(135deg, rgba(181,122,122,0.1), rgba(181,122,122,0.04)); border-color: rgba(181,122,122,0.3); border-left-color: var(--kerja); }
+.current-task-banner.cat-belajar { background: linear-gradient(135deg, rgba(160,122,181,0.1), rgba(160,122,181,0.04)); border-color: rgba(160,122,181,0.3); border-left-color: var(--belajar); }
+.current-task-banner.cat-malam { background: linear-gradient(135deg, rgba(122,138,138,0.1), rgba(122,138,138,0.04)); border-color: rgba(122,138,138,0.3); border-left-color: var(--malam); }
+.current-task-banner.cat-free { background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.03)); border-color: rgba(201,168,76,0.2); border-left-color: var(--gold); }
+
+.current-task-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.current-task-info { flex: 1; min-width: 0; }
+.current-task-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 3px;
+}
+.current-task-name {
+  font-family: "Playfair Display", serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.current-task-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.current-task-status {
+  font-size: 0.7rem;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.status-done { background: rgba(90,158,106,0.15); color: var(--done); }
+.status-skip { background: rgba(181,135,58,0.15); color: var(--skip); }
+.status-ongoing { background: rgba(201,168,76,0.15); color: var(--gold-light); }
+.status-free { background: rgba(201,168,76,0.1); color: var(--gold); }
+
+/* DATE HEADER */
+.date-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.date-nav-btn {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.date-nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.date-info { text-align: center; }
+.date-info .date-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.date-info .date-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.today-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.today-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* PROGRESS BAR */
+.progress-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.progress-circle {
+  position: relative;
+  width: 60px; height: 60px;
+  flex-shrink: 0;
+}
+
+.progress-circle svg {
+  transform: rotate(-90deg);
+  width: 60px; height: 60px;
+}
+
+.progress-circle .track { fill: none; stroke: var(--surface3); stroke-width: 5; }
+.progress-circle .fill { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+
+.progress-pct {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.progress-stats { flex: 1; }
+.progress-stats .stat-row {
+  display: flex;
+  gap: 16px;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.stat-num.done { color: var(--done); }
+.stat-num.skip { color: var(--skip); }
+.stat-num.undone { color: var(--undone); }
+.stat-label { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* SECTION */
+.checklist-section { margin-bottom: 24px; }
+.checklist-section-title {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+/* ITEM */
+.checklist-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.checklist-item.is-done { border-color: rgba(90,158,106,0.3); }
+.checklist-item.is-skip { border-color: rgba(181,135,58,0.3); }
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.item-check {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.is-done .item-check { background: var(--done); border-color: var(--done); }
+.is-skip .item-check { background: var(--skip); border-color: var(--skip); }
+
+.item-info { flex: 1; min-width: 0; }
+.item-name {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+.is-done .item-name { color: var(--text-muted); text-decoration: line-through; }
+.item-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.item-cat {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.item-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 10px;
+}
+
+.act-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  border: 1px solid var(--border2);
+  background: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.act-btn.done-btn { color: var(--done); border-color: rgba(90,158,106,0.4); }
+.act-btn.done-btn:hover { background: rgba(90,158,106,0.1); }
+.act-btn.skip-btn { color: var(--skip); border-color: rgba(181,135,58,0.4); }
+.act-btn.skip-btn:hover { background: rgba(181,135,58,0.1); }
+.act-btn.reset-btn { color: var(--text-muted); }
+.act-btn.reset-btn:hover { border-color: var(--border2); background: var(--surface2); }
+
+/* SKIP REASON */
+.skip-reason-area {
+  padding: 0 14px 12px;
+}
+.skip-reason-input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.skip-reason-input:focus { border-color: var(--skip); }
+.skip-reason-input::placeholder { color: var(--text-muted); }
+
+.skip-note-display {
+  padding: 0 14px 10px;
+  font-size: 0.75rem;
+  color: var(--skip);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* WEEKLY PAGE */
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.week-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+.week-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* WEEKLY SUMMARY CARD */
+.week-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.week-summary-title {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.week-bar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.week-bar-col { text-align: center; }
+.week-bar-day {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.week-bar-wrap {
+  height: 60px;
+  background: var(--surface2);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.week-bar-fill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--gold);
+  border-radius: 4px;
+  transition: height 0.5s ease;
+  opacity: 0.8;
+}
+.week-bar-fill.low { background: var(--danger); opacity: 0.7; }
+.week-bar-fill.mid { background: var(--skip); opacity: 0.8; }
+.week-bar-fill.high { background: var(--done); opacity: 0.8; }
+.week-bar-fill.perfect { background: var(--gold); }
+
+.week-bar-pct {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.week-totals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.week-total-item {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.week-total-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.week-total-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* DAILY LOG */
+.day-log-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.day-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.day-log-name {
+  font-weight: 500;
+  font-size: 0.88rem;
+}
+.day-log-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.day-log-pct {
+  font-size: 0.75rem;
+  color: var(--gold);
+  font-weight: 500;
+}
+.day-log-chevron {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+.day-log-item.expanded .day-log-chevron { transform: rotate(180deg); }
+
+.day-log-detail {
+  display: none;
+  padding: 0 14px 12px;
+  border-top: 1px solid var(--border);
+}
+.day-log-item.expanded .day-log-detail { display: block; }
+
+.log-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+.log-entry:last-child { border-bottom: none; }
+.log-status {
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.log-status.done { background: rgba(90,158,106,0.15); color: var(--done); }
+.log-status.skip { background: rgba(181,135,58,0.15); color: var(--skip); }
+.log-status.undone { background: rgba(68,68,80,0.4); color: var(--text-muted); }
+.log-entry-name { color: var(--text-dim); flex: 1; line-height: 1.4; }
+.log-skip-note { font-size: 0.72rem; color: var(--skip); font-style: italic; margin-top: 2px; }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 640px;
+  padding: 20px 20px 36px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.modal-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.modal-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  resize: none;
+  outline: none;
+  min-height: 80px;
+  transition: border-color 0.2s;
+}
+.modal-input:focus { border-color: var(--skip); }
+.modal-input::placeholder { color: var(--text-muted); }
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.modal-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 0.83rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: opacity 0.2s;
+}
+.modal-btn:hover { opacity: 0.85; }
+.modal-btn.confirm { background: var(--skip); color: #fff; }
+.modal-btn.cancel { background: var(--surface3); color: var(--text-muted); }
+
+.mini-bar {
+  width: 36px; height: 3px;
+  background: var(--border2);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-title">Checklist Fariz</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPage('daily')">Harian</button>
+    <button class="nav-tab" onclick="switchPage('weekly')">Mingguan</button>
+  </div>
+</nav>
+
+<!-- DAILY PAGE -->
+<div class="page active" id="page-daily">
+  <div class="quote-banner">
+    <div class="quote-text" id="quote-text"></div>
+    <div class="quote-author" id="quote-author"></div>
+  </div>
+
+  <div class="date-header">
+    <button class="date-nav-btn" onclick="changeDay(-1)">‹</button>
+    <div class="date-info">
+      <div class="date-label" id="date-label">–</div>
+      <div class="date-sub" id="date-sub">–</div>
+    </div>
+    <button class="date-nav-btn" onclick="changeDay(1)">›</button>
+    <button class="today-btn" onclick="goToday()">Hari ini</button>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-circle">
+      <svg viewBox="0 0 60 60">
+        <circle class="track" cx="30" cy="30" r="25"/>
+        <circle class="fill" id="progress-arc" cx="30" cy="30" r="25" stroke-dasharray="157" stroke-dashoffset="157"/>
+      </svg>
+      <div class="progress-pct" id="progress-pct">0%</div>
+    </div>
+    <div class="progress-stats">
+      <div class="stat-row">
+        <div class="stat-item">
+          <div class="stat-num done" id="stat-done">0</div>
+          <div class="stat-label">Selesai</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num skip" id="stat-skip">0</div>
+          <div class="stat-label">Skip</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num undone" id="stat-undone">0</div>
+          <div class="stat-label">Belum</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="current-task-section"></div>
+  <div id="checklist-container"></div>
+</div>
+
+<!-- WEEKLY PAGE -->
+<div class="page" id="page-weekly">
+  <div class="week-nav">
+    <button class="date-nav-btn" onclick="changeWeek(-1)">‹</button>
+    <div>
+      <div class="week-label" id="week-label">–</div>
+      <div class="week-sub" id="week-sub">–</div>
+    </div>
+    <button class="date-nav-btn" onclick="changeWeek(1)">›</button>
+  </div>
+
+  <div class="week-summary">
+    <div class="week-summary-title">Progress Per Hari</div>
+    <div class="week-bar-grid" id="week-bars"></div>
+    <div class="week-totals">
+      <div class="week-total-item">
+        <div class="week-total-num" style="color:var(--done)" id="w-done">0</div>
+        <div class="week-total-label">Total Selesai</div>
+      </div>
+      <div class="week-total-item">
+        <div class="week-total-num" style="color:var(--skip)" id="w-skip">0</div>
+        <div class="week-total-label">Total Skip</div>
+      </div>
+      <div class="week-total-item">
+        <div class="week-total-num" style="color:var(--gold)" id="w-avg">0%</div>
+        <div class="week-total-label">Rata-rata</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="week-log-container"></div>
+</div>
+
+<!-- SKIP MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="mini-bar"></div>
+    <div class="modal-title" id="modal-item-name">–</div>
+    <div class="modal-sub">Kenapa skip hari ini? (opsional)</div>
+    <textarea class="modal-input" id="modal-reason" placeholder="Contoh: kecapaian setelah kerja, tidak sempat..." rows="3"></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeModal()">Batal</button>
+      <button class="modal-btn confirm" onclick="confirmSkip()">Tandai Skip</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────
+const ROUTINE = [
+  { id: 'r1', name: 'Tahajud + Al-Waqiah', time: '04.00–04.30', cat: 'ibadah', days: [1,2,3,4,5,6,0] },
+  { id: 'r2', name: 'Qobliyah Subuh + Subuh', time: '04.30–05.00', cat: 'ibadah', days: [1,2,3,4,5,6,0] },
+  { id: 'r3', name: 'Belajar BUMN / CPNS', time: '05.00–06.00', cat: 'belajar', days: [1,2,3,4,5,6,0] },
+  { id: 'r4', name: 'Gym', time: '05.00–07.00', cat: 'olahraga', days: [2,5] },
+  { id: 'r5', name: 'Persiapan kerja + Dhuha + Baca buku', time: '06.00–07.30', cat: 'ibadah', days: [1,2,3,4,5] },
+  { id: 'r6', name: 'Mandi + Sarapan + Dhuha', time: '07.30–09.00', cat: 'ibadah', days: [6,0] },
+  { id: 'r7', name: 'Kerja', time: '08.00–17.00', cat: 'kerja', days: [1,2,3,4,5] },
+  { id: 'r8', name: 'Dibimbing DSML', time: '09.00–16.00', cat: 'belajar', days: [6,0] },
+  { id: 'r9', name: 'Lari Pagi', time: '06.00–07.30', cat: 'olahraga', days: [6,0] },
+  { id: 'r10', name: 'Maghrib + Makan + Isya + Al-Mulk', time: '17.00–20.00', cat: 'ibadah', days: [1,2,3,4,5] },
+  { id: 'r12', name: 'Les Bahasa Inggris', time: '20.00', cat: 'belajar', days: [1,3,5] },
+  { id: 'r13', name: 'Belajar DSML / BUMN / Job search / Freelance', time: '20.00–21.30', cat: 'belajar', days: [2,4] },
+  { id: 'r14', name: 'Free Time — Siap-siap, Pacaran / Netflix 😄', time: '16.30–23.00', cat: 'malam', days: [6,0] },
+  { id: 'r15', name: 'YouTube Edukatif Santai', time: '21.30–22.00', cat: 'malam', days: [1,2,3,4,5] },
+  { id: 'r16', name: 'Wind Down — Skincare + ngobrol pacar', time: '22.00–23.00', cat: 'malam', days: [1,2,3,4,5] },
+];
+
+const SPECIAL = [
+  { id: 's1', name: 'Puasa Senin', time: 'Sepanjang hari', cat: 'ibadah', days: [1] },
+  { id: 's2', name: 'Puasa Kamis', time: 'Sepanjang hari', cat: 'ibadah', days: [4] },
+];
+
+const ALL_ITEMS = [...ROUTINE, ...SPECIAL];
+
+const CAT_COLOR = {
+  ibadah: '#7c9e8a', olahraga: '#7a8cb5',
+  kerja: '#b57a7a', belajar: '#a07ab5', malam: '#7a8a8a'
+};
+
+const DAYS_ID = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+// ─── STATE ───────────────────────────────────────────────
+let currentDateKey = todayKey();
+let currentWeekOffset = 0;
+let pendingSkipItemId = null;
+
+// Storage key: records:YYYY-MM-DD → { itemId: { status: 'done'|'skip'|null, note: '' } }
+function todayKey() {
+  const d = new Date();
+  return dateKey(d);
+}
+function dateKey(d) {
+  return d.toISOString().slice(0,10);
+}
+function keyToDate(k) {
+  const [y,m,d] = k.split('-').map(Number);
+  return new Date(y,m-1,d);
+}
+
+function loadRecord(dk) {
+  try { return JSON.parse(localStorage.getItem('rec:'+dk) || '{}'); }
+  catch { return {}; }
+}
+function saveRecord(dk, data) {
+  localStorage.setItem('rec:'+dk, JSON.stringify(data));
+}
+
+// ─── NAV ───────────────────────────────────────────────
+function switchPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (p === 'weekly') renderWeekly();
+}
+
+// ─── CURRENT TASK ───────────────────────────────────────
+const CAT_ICON = {
+  ibadah: '🕌', olahraga: '💪', kerja: '💼', belajar: '📚', malam: '🌙', free: '🎉'
+};
+
+function timeToMinutes(timeStr) {
+  // accepts "04.00", "17.00" etc
+  const [h, m] = timeStr.replace('–','').split('.').map(Number);
+  return h * 60 + (m || 0);
+}
+
+function parseTimeRange(timeStr) {
+  // e.g. "04.00–04.30" or "08.00–17.00" or "20.00"
+  if (timeStr.includes('–')) {
+    const parts = timeStr.split('–');
+    return { start: timeToMinutes(parts[0].trim()), end: timeToMinutes(parts[1].trim()) };
+  }
+  // single time like "20.00" — assume 1.5 hours
+  const start = timeToMinutes(timeStr.trim());
+  return { start, end: start + 90 };
+}
+
+function renderCurrentTask() {
+  if (currentDateKey !== todayKey()) {
+    document.getElementById('current-task-section').innerHTML = '';
+    return;
+  }
+
+  const now = new Date();
+  const currentMins = now.getHours() * 60 + now.getMinutes();
+  const items = getItemsForDay(currentDateKey);
+  const rec = loadRecord(currentDateKey);
+
+  // Find current running task
+  let currentItem = null;
+  let nextItem = null;
+  let nextStart = Infinity;
+
+  items.forEach(it => {
+    if (it.time === 'Sepanjang hari') return;
+    const { start, end } = parseTimeRange(it.time);
+    // handle overnight (end < start means crosses midnight, skip)
+    if (currentMins >= start && currentMins < end) {
+      currentItem = { ...it, start, end };
+    }
+    if (start > currentMins && start < nextStart) {
+      nextStart = start;
+      nextItem = { ...it, start, end };
+    }
+  });
+
+  // Special: Puasa runs all day
+  const puasaItem = items.find(it => it.time === 'Sepanjang hari');
+
+  let html = '';
+
+  if (currentItem) {
+    const status = rec[currentItem.id]?.status || null;
+    const statusLabel = status === 'done' ? 'Selesai ✓' : status === 'skip' ? 'Diskip' : 'Sedang berjalan';
+    const statusClass = status === 'done' ? 'status-done' : status === 'skip' ? 'status-skip' : 'status-ongoing';
+    html += `
+    <div class="current-task-banner cat-${currentItem.cat}">
+      <div class="current-task-icon">${CAT_ICON[currentItem.cat]}</div>
+      <div class="current-task-info">
+        <div class="current-task-label">Sekarang waktunya</div>
+        <div class="current-task-name">${currentItem.name}</div>
+        <div class="current-task-time">${currentItem.time}</div>
+      </div>
+      <div class="current-task-status ${statusClass}">${statusLabel}</div>
+    </div>`;
+  } else {
+    // Between tasks or after all tasks
+    const afterAll = items.every(it => {
+      if (it.time === 'Sepanjang hari') return true;
+      const { end } = parseTimeRange(it.time);
+      return currentMins >= end;
+    });
+
+    if (nextItem) {
+      const hh = String(Math.floor(nextItem.start / 60)).padStart(2,'0');
+      const mm = String(nextItem.start % 60).padStart(2,'0');
+      html += `
+      <div class="current-task-banner cat-free">
+        <div class="current-task-icon">⏳</div>
+        <div class="current-task-info">
+          <div class="current-task-label">Waktu istirahat</div>
+          <div class="current-task-name">Selanjutnya: ${nextItem.name}</div>
+          <div class="current-task-time">Mulai jam ${hh}.${mm}</div>
+        </div>
+      </div>`;
+    } else {
+      html += `
+      <div class="current-task-banner cat-free">
+        <div class="current-task-icon">🌙</div>
+        <div class="current-task-info">
+          <div class="current-task-label">Semua task selesai</div>
+          <div class="current-task-name">Waktunya istirahat!</div>
+          <div class="current-task-time">Tidur yang cukup ya 😄</div>
+        </div>
+      </div>`;
+    }
+  }
+
+  // Append puasa reminder if applicable
+  if (puasaItem) {
+    const statusPuasa = rec[puasaItem.id]?.status || null;
+    const statusLabel = statusPuasa === 'done' ? 'Selesai ✓' : statusPuasa === 'skip' ? 'Diskip' : 'Sedang berjalan';
+    const statusClass = statusPuasa === 'done' ? 'status-done' : statusPuasa === 'skip' ? 'status-skip' : 'status-ongoing';
+    html += `
+    <div class="current-task-banner cat-ibadah" style="margin-top:-10px">
+      <div class="current-task-icon">🌙</div>
+      <div class="current-task-info">
+        <div class="current-task-label">Hari ini</div>
+        <div class="current-task-name">${puasaItem.name}</div>
+        <div class="current-task-time">Sepanjang hari</div>
+      </div>
+      <div class="current-task-status ${statusClass}">${statusLabel}</div>
+    </div>`;
+  }
+
+  document.getElementById('current-task-section').innerHTML = html;
+}
+
+// ─── DAILY ───────────────────────────────────────────────
+function changeDay(n) {
+  const d = keyToDate(currentDateKey);
+  d.setDate(d.getDate() + n);
+  currentDateKey = dateKey(d);
+  renderDaily();
+}
+function goToday() {
+  currentDateKey = todayKey();
+  renderDaily();
+}
+
+function getItemsForDay(dk) {
+  const d = keyToDate(dk);
+  const dow = d.getDay();
+  return ALL_ITEMS.filter(item => item.days.includes(dow));
+}
+
+function renderDaily() {
+  const d = keyToDate(currentDateKey);
+  const dow = d.getDay();
+  const isToday = currentDateKey === todayKey();
+
+  document.getElementById('date-label').textContent =
+    `${DAYS_ID[dow]}, ${d.getDate()} ${MONTHS_ID[d.getMonth()]} ${d.getFullYear()}`;
+  document.getElementById('date-sub').textContent = isToday ? 'Hari ini' : '';
+
+  const items = getItemsForDay(currentDateKey);
+  const rec = loadRecord(currentDateKey);
+
+  let done = 0, skip = 0;
+  items.forEach(it => {
+    const s = rec[it.id]?.status;
+    if (s === 'done') done++;
+    else if (s === 'skip') skip++;
+  });
+  const undone = items.length - done - skip;
+  const pct = items.length ? Math.round((done / items.length) * 100) : 0;
+
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-skip').textContent = skip;
+  document.getElementById('stat-undone').textContent = undone;
+  document.getElementById('progress-pct').textContent = pct + '%';
+
+  const circ = 2 * Math.PI * 25;
+  const offset = circ - (pct / 100) * circ;
+  document.getElementById('progress-arc').style.strokeDashoffset = offset;
+
+  // Group by category
+  const groups = {
+    ibadah: [], olahraga: [], kerja: [], belajar: [], malam: []
+  };
+  items.forEach(it => {
+    if (groups[it.cat]) groups[it.cat].push(it);
+  });
+
+  const catLabel = {
+    ibadah: 'Ibadah', olahraga: 'Olahraga & Kesehatan',
+    kerja: 'Kerja', belajar: 'Belajar & Pengembangan', malam: 'Malam & Istirahat'
+  };
+
+  let html = '';
+  Object.entries(groups).forEach(([cat, its]) => {
+    if (!its.length) return;
+    html += `<div class="checklist-section">
+      <div class="checklist-section-title">${catLabel[cat]}</div>`;
+    its.forEach(it => {
+      const state = rec[it.id] || {};
+      const status = state.status || null;
+      const note = state.note || '';
+      const isDone = status === 'done';
+      const isSkip = status === 'skip';
+      html += `
+      <div class="checklist-item ${isDone?'is-done':''} ${isSkip?'is-skip':''}" id="ci-${it.id}">
+        <div class="item-row" onclick="toggleExpand('${it.id}')">
+          <div class="item-check">${isDone?'✓':isSkip?'–':''}</div>
+          <div class="item-info">
+            <div class="item-name">${it.name}</div>
+            <div class="item-time">${it.time}</div>
+          </div>
+          <div class="item-cat" style="background:${CAT_COLOR[it.cat]}"></div>
+        </div>
+        <div class="item-actions" id="ia-${it.id}" style="display:none">
+          ${!isDone ? `<button class="act-btn done-btn" onclick="setStatus('${it.id}','done')">✓ Selesai</button>` : ''}
+          ${!isSkip ? `<button class="act-btn skip-btn" onclick="openSkipModal('${it.id}','${it.name.replace(/'/g,"\\'")}')">– Skip</button>` : ''}
+          ${status ? `<button class="act-btn reset-btn" onclick="setStatus('${it.id}',null)">↺ Reset</button>` : ''}
+        </div>
+        ${isSkip && note ? `<div class="skip-note-display">💬 ${note}</div>` : ''}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  document.getElementById('checklist-container').innerHTML = html || '<div class="empty-state">Tidak ada jadwal hari ini.</div>';
+  renderCurrentTask();
+}
+
+function toggleExpand(id) {
+  const ia = document.getElementById('ia-'+id);
+  if (ia) ia.style.display = ia.style.display === 'none' ? 'flex' : 'none';
+}
+
+function setStatus(id, status) {
+  const rec = loadRecord(currentDateKey);
+  if (status === null) {
+    delete rec[id];
+  } else {
+    rec[id] = { status, note: rec[id]?.note || '' };
+  }
+  saveRecord(currentDateKey, rec);
+  renderDaily();
+}
+
+// ─── SKIP MODAL ───────────────────────────────────────────────
+function openSkipModal(id, name) {
+  pendingSkipItemId = id;
+  document.getElementById('modal-item-name').textContent = name;
+  document.getElementById('modal-reason').value = '';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  pendingSkipItemId = null;
+}
+function confirmSkip() {
+  if (!pendingSkipItemId) return;
+  const note = document.getElementById('modal-reason').value.trim();
+  const rec = loadRecord(currentDateKey);
+  rec[pendingSkipItemId] = { status: 'skip', note };
+  saveRecord(currentDateKey, rec);
+  closeModal();
+  renderDaily();
+}
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ─── WEEKLY ───────────────────────────────────────────────
+function getWeekStart(offset) {
+  const today = new Date();
+  const dow = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((dow + 6) % 7) + offset * 7);
+  monday.setHours(0,0,0,0);
+  return monday;
+}
+
+function changeWeek(n) {
+  currentWeekOffset += n;
+  renderWeekly();
+}
+
+function renderWeekly() {
+  const ws = getWeekStart(currentWeekOffset);
+  const we = new Date(ws); we.setDate(ws.getDate() + 6);
+
+  document.getElementById('week-label').textContent =
+    `${ws.getDate()} ${MONTHS_ID[ws.getMonth()]} – ${we.getDate()} ${MONTHS_ID[we.getMonth()]} ${we.getFullYear()}`;
+  document.getElementById('week-sub').textContent =
+    currentWeekOffset === 0 ? 'Minggu ini' : currentWeekOffset === -1 ? 'Minggu lalu' : '';
+
+  let totalDone = 0, totalSkip = 0, totalAll = 0;
+  let barsHtml = '';
+  const dayLogs = [];
+  const shortDay = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ws); d.setDate(ws.getDate() + i);
+    const dk = dateKey(d);
+    const items = getItemsForDay(dk);
+    const rec = loadRecord(dk);
+    let done = 0, skip = 0;
+    items.forEach(it => {
+      const s = rec[it.id]?.status;
+      if (s === 'done') done++;
+      else if (s === 'skip') skip++;
+    });
+    const pct = items.length ? Math.round((done / items.length) * 100) : 0;
+    totalDone += done; totalSkip += skip; totalAll += items.length;
+
+    const fillClass = pct >= 80 ? 'perfect' : pct >= 60 ? 'high' : pct >= 30 ? 'mid' : items.length ? 'low' : '';
+    const isFuture = d > new Date();
+
+    barsHtml += `
+    <div class="week-bar-col">
+      <div class="week-bar-day">${shortDay[i]}</div>
+      <div class="week-bar-wrap">
+        <div class="week-bar-fill ${fillClass}" style="height:${isFuture?0:pct}%"></div>
+      </div>
+      <div class="week-bar-pct">${isFuture?'–':pct+'%'}</div>
+    </div>`;
+
+    dayLogs.push({ d, dk, items, rec, done, skip, pct });
+  }
+
+  document.getElementById('week-bars').innerHTML = barsHtml;
+  const avg = totalAll ? Math.round((totalDone / totalAll) * 100) : 0;
+  document.getElementById('w-done').textContent = totalDone;
+  document.getElementById('w-skip').textContent = totalSkip;
+  document.getElementById('w-avg').textContent = avg + '%';
+
+  // Day logs
+  let logHtml = '';
+  dayLogs.forEach(({ d, items, rec, done, skip, pct }, i) => {
+    const dow = d.getDay();
+    const isFuture = d > new Date();
+    if (isFuture) return;
+    logHtml += `
+    <div class="day-log-item" id="dli-${i}">
+      <div class="day-log-header" onclick="toggleDayLog(${i})">
+        <div class="day-log-name">${DAYS_ID[dow]}, ${d.getDate()} ${MONTHS_ID[d.getMonth()]}</div>
+        <div class="day-log-meta">
+          <span class="day-log-pct">${pct}%</span>
+          <span class="day-log-chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-log-detail">`;
+    if (!items.length) {
+      logHtml += `<div style="font-size:0.78rem;color:var(--text-muted);padding:8px 0">Tidak ada jadwal.</div>`;
+    } else {
+      items.forEach(it => {
+        const state = rec[it.id] || {};
+        const status = state.status || 'undone';
+        const note = state.note || '';
+        const label = status === 'done' ? 'Selesai' : status === 'skip' ? 'Skip' : 'Belum';
+        logHtml += `
+        <div class="log-entry">
+          <span class="log-status ${status}">${label}</span>
+          <div>
+            <div class="log-entry-name">${it.name}</div>
+            ${status === 'skip' && note ? `<div class="log-skip-note">💬 ${note}</div>` : ''}
+          </div>
+        </div>`;
+      });
+    }
+    logHtml += `</div></div>`;
+  });
+  document.getElementById('week-log-container').innerHTML = logHtml || '<div class="empty-state">Belum ada data minggu ini.</div>';
+}
+
+function toggleDayLog(i) {
+  const el = document.getElementById('dli-'+i);
+  if (el) el.classList.toggle('expanded');
+}
+
+// ─── INIT ───────────────────────────────────────────────
+
+// ─── QUOTES ─────────────────────────────────────────────
+const QUOTES = [
+  { text: "Sabar itu ada dua macam: sabar atas sesuatu yang tidak kamu inginkan, dan sabar menahan diri dari sesuatu yang kamu inginkan.", author: "Ali bin Abi Thalib" },
+  { text: "Janganlah kamu berputus asa dari rahmat Allah. Sesungguhnya Allah mengampuni semua dosa.", author: "QS. Az-Zumar: 53" },
+  { text: "Orang yang kuat bukanlah yang menang dalam perkelahian, tetapi yang mampu mengendalikan dirinya ketika marah.", author: "Nabi Muhammad SAW" },
+  { text: "Barang siapa yang hari ini lebih baik dari hari kemarin, maka ia termasuk orang yang beruntung.", author: "Nabi Muhammad SAW" },
+  { text: "Ilmu itu lebih baik daripada harta. Ilmu menjaga engkau, sementara engkau menjaga harta.", author: "Ali bin Abi Thalib" },
+  { text: "Sesungguhnya bersama kesulitan ada kemudahan.", author: "QS. Al-Insyirah: 6" },
+  { text: "Mulailah dengan bismillah, lanjutkan dengan usaha, akhiri dengan syukur.", author: "Hasan Al-Bashri" },
+  { text: "Jika kamu tidak bisa menahan lelahnya belajar, maka kamu harus sanggup menanggung perihnya kebodohan.", author: "Imam Syafii" },
+  { text: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lain.", author: "Nabi Muhammad SAW" },
+  { text: "Waktu bagaikan pedang. Jika kamu tidak memanfaatkannya, ia akan memotongmu.", author: "Imam Syafii" },
+  { text: "Jangan lihat siapa yang berbicara, tapi lihat apa yang diucapkan.", author: "Ali bin Abi Thalib" },
+  { text: "Ridha Allah tergantung kepada ridha orang tua, dan murka Allah tergantung kepada murka orang tua.", author: "Nabi Muhammad SAW" },
+  { text: "Sesungguhnya Allah tidak mengubah keadaan suatu kaum sebelum mereka mengubah keadaan diri mereka sendiri.", author: "QS. Ar-Rad: 11" },
+  { text: "Bersabarlah, karena Allah tidak menyia-nyiakan pahala orang yang berbuat baik.", author: "QS. Hud: 115" },
+  { text: "Tuntutlah ilmu dari buaian hingga liang lahat.", author: "Nabi Muhammad SAW" },
+  { text: "Ketahuilah bahwa kemenangan itu bersama kesabaran, jalan keluar bersama kesempitan, dan kemudahan bersama kesulitan.", author: "Nabi Muhammad SAW" },
+  { text: "Barang siapa yang mengenal dirinya, maka ia telah mengenal Tuhannya.", author: "Imam Al-Ghazali" },
+  { text: "Dunia ini adalah ladang untuk akhirat.", author: "Imam Al-Ghazali" },
+  { text: "Orang yang berilmu dan beramal dengan ilmunya, dialah yang disebut besar di kerajaan langit.", author: "Imam Al-Ghazali" },
+  { text: "Takwa adalah engkau takut kepada Allah sesuai dengan kebesaran-Nya.", author: "Ibnu Masud" },
+  { text: "Kesuksesan adalah hasil dari persiapan, kerja keras, dan belajar dari kegagalan.", author: "Colin Powell" },
+  { text: "Jangan biarkan apa yang tidak bisa kamu lakukan mengganggu apa yang bisa kamu lakukan.", author: "John Wooden" },
+  { text: "Kegagalan adalah bumbu yang memberikan rasa pada kesuksesan.", author: "Truman Capote" },
+  { text: "Hidup adalah apa yang terjadi saat kamu sibuk membuat rencana lain.", author: "John Lennon" },
+  { text: "Cara terbaik untuk memulai adalah berhenti berbicara dan mulai melakukan.", author: "Walt Disney" },
+  { text: "Jika kamu ingin hidup bahagia, ikat dirimu pada tujuan, bukan pada orang atau benda.", author: "Albert Einstein" },
+  { text: "Satu-satunya cara untuk melakukan pekerjaan besar adalah dengan mencintai apa yang kamu lakukan.", author: "Steve Jobs" },
+  { text: "Kesuksesan biasanya datang pada mereka yang terlalu sibuk untuk mencarinya.", author: "Henry David Thoreau" },
+  { text: "Bukan tentang apakah kamu jatuh, tapi tentang apakah kamu bangkit.", author: "Vince Lombardi" },
+  { text: "Investasi dalam pengetahuan selalu memberikan bunga terbaik.", author: "Benjamin Franklin" },
+  { text: "Orang yang tidak pernah membuat kesalahan tidak pernah mencoba sesuatu yang baru.", author: "Albert Einstein" },
+  { text: "Masa depan milik mereka yang percaya pada keindahan impian mereka.", author: "Eleanor Roosevelt" },
+  { text: "Kamu tidak bisa kembali ke masa lalu dan mengubah awal, tapi kamu bisa mulai sekarang dan mengubah akhir.", author: "C.S. Lewis" },
+  { text: "Perubahan besar dimulai dari keberanian satu orang untuk melangkah berbeda.", author: "Nelson Mandela" },
+  { text: "Jangan hitung hari-harinya, buat setiap harinya berarti.", author: "Muhammad Ali" },
+  { text: "Disiplin adalah melakukan apa yang perlu dilakukan, bahkan ketika kamu tidak ingin melakukannya.", author: "Mike Ditka" },
+  { text: "Rahasia untuk maju adalah memulai.", author: "Mark Twain" },
+  { text: "Berani bermimpi besar, tapi mulailah dari langkah kecil.", author: "Peter Drucker" },
+  { text: "Kekuatan tidak datang dari kemampuan fisik. Ia datang dari semangat yang tidak bisa dikalahkan.", author: "Mahatma Gandhi" },
+  { text: "Hidup bukan tentang menemukan dirimu. Hidup adalah tentang menciptakan dirimu.", author: "George Bernard Shaw" },
+];
+
+function renderQuote() {
+  const now = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+  const q = QUOTES[dayOfYear % QUOTES.length];
+  const el = document.getElementById('quote-text');
+  const au = document.getElementById('quote-author');
+  if (el) el.textContent = '“' + q.text + '”';
+  if (au) au.textContent = q.author;
+}
+
+renderQuote();
+renderDaily();
+</script>
+</body>
+</html>
